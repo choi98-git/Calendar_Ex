@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.media.Image;
@@ -124,10 +125,11 @@ public class MainActivity extends ScheduleMemo  {
     }
 
     private void setDDayText(){
-        if (dDay == null){
-            dDayText.setText("D-Day 설정");
-        }else{
-            dDayText.setText(dDay);
-        }
+        SharedPreferences sf = getSharedPreferences("sFile",MODE_PRIVATE);
+
+        //text라는 key에 저장된 값이 있는지 확인. 아무값도 들어있지 않으면 ""를 반환
+        String text = sf.getString("text","D-Day 설정");
+        dDayText.setText(text);
+
     }
 }

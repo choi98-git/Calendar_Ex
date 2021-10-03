@@ -2,6 +2,7 @@ package com.example.calendartest1;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -16,8 +17,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 public class DdayActivity extends AppCompatActivity {
-
-    DDayDBHelper dDayDBHelper;
+    
     Calendar tCal;
     CalendarView calendarView;
     Button dDayButton;
@@ -34,7 +34,6 @@ public class DdayActivity extends AppCompatActivity {
         dDayButton = (Button) findViewById(R.id.dDaySettingButton);
         todayDate = (TextView) findViewById(R.id.todayDate);
         dDayDate = (TextView) findViewById(R.id.dDayDate);
-        dDayDBHelper = new DDayDBHelper(getApplicationContext(), "DDay.db", null, 1);
 
         tCal = Calendar.getInstance();
         tYear = tCal.get(Calendar.YEAR);
@@ -49,7 +48,6 @@ public class DdayActivity extends AppCompatActivity {
             public void onSelectedDayChange(@NonNull CalendarView calendarView, int year, int month, int dayOfMonth) {
                 day = String.format("%d년 %d월 %d일",year,month+1,dayOfMonth);
                 dDay = getDday(year, month, dayOfMonth);
-                dDayDBHelper.insertData(dDay);
                 dDayDate.setText(day);
             }
         });
@@ -58,8 +56,9 @@ public class DdayActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Toast.makeText(getApplicationContext(), "D-day 설정 완료!!", Toast.LENGTH_SHORT).show();
+                StoreDDay();
+
                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                intent.putExtra("dDay", dDay);
                 startActivity(intent);
             }
         });
@@ -89,6 +88,14 @@ public class DdayActivity extends AppCompatActivity {
 
         final String strCount = (String.format(strFormat, result));
         return strCount;
+    }
+
+    private void StoreDDay(){
+        SharedPreferences sharedPreferences = getSharedPreferences("sFile",MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        String text = dDay;
+        editor.putString("text",text);
+        editor.apply();
     }
 }
 
